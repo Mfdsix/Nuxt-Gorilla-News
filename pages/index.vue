@@ -1,6 +1,7 @@
 <template>
   <div style="padding: 50px;">
     <h3>Blog List</h3>
+    <p>This blog posts sourced from <a target="_blank" href="https://hytale-api.com/">https://hytale-api.com/</a> . Very big thanks for provide this api for free, so i can use for this purpose.</p>
     <Divider/>
     <Row :gutter="16" style="margin-top: 20px;">
       <Col :md="8" v-for="post in posts" :key="post.id" style="margin-bottom: 20px;">
@@ -11,7 +12,7 @@
           </div>
           <Divider/>
           <div v-html="post.excerpt"></div>
-          <a target="_blank" :href="post.link">read more...</a>
+          <NuxtLink :to="post.slug">read more...</NuxtLink>
         </Card>
       </Col>
     </Row>
@@ -19,21 +20,23 @@
 </template>
 
 <script>
+  const baseImageUrl = "https://cdn.hytale.com/variants/blog_thumb_"
+
   export default{
     async asyncData({ app }){
       let renderedPost = []
-      const posts = await app.$axios.$get('https://gorillalogic.com/wp-json/wp/v2/posts')
-      posts.forEach(async (v) => {
-        const featured = await app.$axios.$get(v._links["wp:featuredmedia"][0].href);
-        renderedPost.push({
-          title: v.title.rendered,
-          excerpt: v.excerpt.rendered,
-          link: v.link,
-          image: featured?.guid?.rendered,          
-        })
-      })
+      const posts = await app.$axios.$get('/api/blog/post/published')
+      posts.map((v) => {
+          v.id = v._id
+          v.title = v.title
+          v.author = v.author
+          v.slug = v.slug
+          v.excerpt = v.bodyExcerpt
+          v.image = baseImageUrl + v.coverImage?.s3Key
 
-      return { posts: renderedPost }
+          return v
+      })
+      return { posts: posts }
     },
   }
 </script>

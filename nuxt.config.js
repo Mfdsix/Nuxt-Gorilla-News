@@ -65,8 +65,10 @@ export default {
   // proxy configuration
   proxy: {
     "/api/": {
-      target: "https://gorillalogic.com/wp-json/wp/v2/posts",
-      pathRewrite: { "^/api/": "" }
-    }
+      target: "https://hytale.com/api",
+      pathRewrite: {
+        "^/api/" : ""
+      }
+    },
   }
 }

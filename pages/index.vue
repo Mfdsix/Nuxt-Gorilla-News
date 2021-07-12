@@ -24,18 +24,19 @@
 
   export default{
     async asyncData({ app }){
-      let renderedPost = []
       const posts = await app.$axios.$get('/api/blog/post/published')
-      posts.map((v) => {
-          v.id = v._id
-          v.title = v.title
-          v.author = v.author
-          v.slug = v.slug
-          v.excerpt = v.bodyExcerpt
-          v.image = baseImageUrl + v.coverImage?.s3Key
-
-          return v
-      })
+      if(posts && posts.length > 0){
+        posts.map((v) => {
+            v.id = v._id
+            v.title = v.title
+            v.author = v.author
+            v.slug = v.slug
+            v.excerpt = v.bodyExcerpt
+            v.image = baseImageUrl + v.coverImage?.s3Key
+  
+            return v
+        })
+      }
       return { posts: posts }
     },
   }
